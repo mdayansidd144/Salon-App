@@ -16,10 +16,11 @@ class Database {
         maxPoolSize: 10,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
+        family: 4
       });
 
       this.isConnected = true;
-      logger.info(`MongoDB Connected: ${conn.connection.host}`);
+      logger.info(`✅ MongoDB Connected: ${conn.connection.host}`);
 
       mongoose.connection.on('error', (err) => {
         logger.error('MongoDB connection error:', err);
@@ -31,6 +32,12 @@ class Database {
         this.isConnected = false;
       });
 
+      process.on('SIGINT', async () => {
+        await mongoose.connection.close();
+        logger.info('MongoDB connection closed');
+        process.exit(0);
+      });
+
     } catch (error) {
       logger.error('Database connection failed:', error);
       process.exit(1);
@@ -39,7 +46,6 @@ class Database {
 
   async disconnect() {
     if (!this.isConnected) return;
-    
     await mongoose.disconnect();
     this.isConnected = false;
     logger.info('MongoDB disconnected');

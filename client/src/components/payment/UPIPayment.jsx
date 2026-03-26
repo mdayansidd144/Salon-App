@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import QRCode from 'react-qr-code';
-import { UpiIcon, CopyIcon, CheckIcon } from '../icons';
-
+import { Copy, Check } from 'lucide-react';
 export const UpiPayment = ({ amount, appointmentId, onSuccess }) => {
   const [showQR, setShowQR] = useState(false);
   const [copied, setCopied] = useState(false);
   const [upiId, setUpiId] = useState('');
   const [loading, setLoading] = useState(false);
-
   const merchantUPI = process.env.REACT_APP_UPI_ID || 'salonpro@okhdfcbank';
   const upiIntent = `upi://pay?pa=${merchantUPI}&pn=Salon%20Pro&am=${amount}&tn=Appointment_${appointmentId}&cu=INR`;
-
   const copyUPI = () => {
     navigator.clipboard.writeText(merchantUPI);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     toast.success('UPI ID copied!');
   };
-
   const handleUPIPayment = () => {
     if (!upiId) {
       toast.error('Please enter UPI ID');
@@ -29,13 +25,11 @@ export const UpiPayment = ({ amount, appointmentId, onSuccess }) => {
     // Create UPI intent with entered UPI ID
     const customUpiIntent = `upi://pay?pa=${upiId}&pn=Salon%20Pro&am=${amount}&tn=Appointment_${appointmentId}&cu=INR`;
     window.location.href = customUpiIntent;
-    
     setTimeout(() => {
       setLoading(false);
       toast.success('Please complete payment in your UPI app');
     }, 1000);
   };
-
   return (
     <div className="space-y-4">
       {!showQR ? (
