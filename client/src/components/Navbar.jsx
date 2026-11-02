@@ -39,14 +39,14 @@ const Navbar = () => {
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0a0a0a]/95 backdrop-blur-md shadow-sm py-4' : 'bg-[#0a0a0a] py-5'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
         
-        {/* Logo */}
-        <Link to="/" className="text-xl font-bold tracking-tight text-white flex items-center gap-2 z-50">
+        {/* Logo points to /home */}
+        <Link to="/home" className="text-xl font-bold tracking-tight text-white flex items-center gap-2 z-50">
           <span className="text-[#D4AF37]">✂</span> {salonData.name.toUpperCase()}
         </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-8 text-sm font-medium text-gray-400">
-          <Link to="/" className="hover:text-white transition-colors">Home</Link>
+          <Link to="/home" className="hover:text-white transition-colors">Home</Link>
           <Link to="/categories" className="hover:text-white transition-colors">Services</Link>
           <Link to="/stylists" className="hover:text-white transition-colors">Stylists</Link>
           <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
@@ -57,7 +57,7 @@ const Navbar = () => {
           {isLoggedIn && user ? (
             <>
               <Link 
-                to={user.role === 'admin' ? '/admin' : user.role === 'groomer' ? '/groomer-dashboard' : '/'} 
+                to={user.role === 'admin' ? '/admin' : user.role === 'groomer' ? '/groomer-dashboard' : '/home'} 
                 className="flex items-center focus:outline-none"
                 title={user.name}
               >
@@ -76,7 +76,7 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link to="/login" className="text-sm font-medium text-gray-400 hover:text-white transition">
+            <Link to="/" className="text-sm font-medium text-gray-400 hover:text-white transition">
               Login
             </Link>
           )}
@@ -85,7 +85,7 @@ const Navbar = () => {
         {/* Mobile Hamburger Icon */}
         <div className="flex lg:hidden items-center space-x-4 z-50">
           {isLoggedIn && user && (
-            <Link to={user.role === 'admin' ? '/admin' : user.role === 'groomer' ? '/groomer-dashboard' : '/'} className="flex items-center">
+            <Link to={user.role === 'admin' ? '/admin' : user.role === 'groomer' ? '/groomer-dashboard' : '/home'} className="flex items-center">
               {user.avatar ? (
                 <img src={user.avatar} alt={user.name} className="w-9 h-9 rounded-full border border-[#D4AF37] object-cover" />
               ) : (
@@ -117,7 +117,7 @@ const Navbar = () => {
       {/* Mobile Menu Dropdown */}
       <div className={`lg:hidden fixed inset-x-0 top-0 pt-20 bg-[#0a0a0a]/98 backdrop-blur-lg transition-transform duration-300 transform ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'} h-screen`}>
         <nav className="flex flex-col items-center justify-center space-y-8 mt-10">
-          <Link to="/" onClick={closeMobileMenu} className="text-2xl text-gray-300 hover:text-[#D4AF37] transition">Home</Link>
+          <Link to="/home" onClick={closeMobileMenu} className="text-2xl text-gray-300 hover:text-[#D4AF37] transition">Home</Link>
           <Link to="/categories" onClick={closeMobileMenu} className="text-2xl text-gray-300 hover:text-[#D4AF37] transition">Services</Link>
           <Link to="/stylists" onClick={closeMobileMenu} className="text-2xl text-gray-300 hover:text-[#D4AF37] transition">Stylists</Link>
           <Link to="/contact" onClick={closeMobileMenu} className="text-2xl text-gray-300 hover:text-[#D4AF37] transition">Contact</Link>
@@ -128,7 +128,7 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <Link to="/login" onClick={closeMobileMenu} className="text-xl text-[#D4AF37] hover:text-white transition">
+              <Link to="/" onClick={closeMobileMenu} className="text-xl text-[#D4AF37] hover:text-white transition">
                 Login
               </Link>
             )}

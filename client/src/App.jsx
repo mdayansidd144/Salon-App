@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage';
 import CategoriesPage from './pages/CategoriesPage';
 import CategoryPage from './pages/CategoryPage';
 import StylistsPage from './pages/StylistsPage';
-import AdminLogin from './pages/AdminLogin'; // Unified Login
+import AdminLogin from './pages/AdminLogin'; 
 import AdminDashboard from './pages/AdminDashboard';
 import ContactPage from './pages/ContactPage';
 import GroomerDashboard from './pages/GroomerDashboard';
@@ -22,16 +22,17 @@ function App() {
           <Toaster position="bottom-right" toastOptions={{ style: { background: '#1f2937', color: '#fff' } }} />
           
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            {/* Root is now Login */}
+            <Route path="/" element={<AdminLogin />} />
+            
+            {/* Home is now /home */}
+            <Route path="/home" element={<HomePage />} />
+            
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/stylists" element={<StylistsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             
-            {/* Single Login Route */}
-            <Route path="/login" element={<AdminLogin />} />
-            
-            {/* Dashboards */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/groomer-dashboard" element={<GroomerDashboard />} />
           </Routes>

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
 
-const API_BASE = 'http://localhost:5000';
+// Use the environment variable
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const AdminLogin = () => {
     } else if (user.role === 'groomer') {
       navigate('/groomer-dashboard');
     } else {
-      navigate('/'); // Customers go to home page
+      navigate('/home'); 
     }
   };
 
@@ -25,7 +26,7 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -49,7 +50,7 @@ const AdminLogin = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch(`${API_BASE}/api/auth/google`, {
+      const res = await fetch(`${API_BASE}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: credentialResponse.credential })
