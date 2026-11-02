@@ -1,0 +1,35 @@
+[
+  {
+    "id": "admin1",
+    "name": "Admin",
+    "email": "cut-for-you@salon.com",
+    "password": "$2a$10$Zgdx5DXcuWlJ15qR2EoCjO.2BaXGI8HASnGmPmZSdvGKjMNcR9Q72",
+    "role": "admin"
+  },
+  {
+    "id": "groomer1",
+    "name": "Mohd Umar",
+    "email": "umar@salon.com",
+    "password": "$2a$10$54y51GwdUUMW5/v80Sw3T.v2AyQvUF5QJwxPtuZWqilIE3tB9M1m.",
+    "role": "groomer",
+    "phone": "+919519159639",
+    "upiId": "umar@okhdfcbank",
+    "totalEarnings": 0,
+    "pendingPayout": 0,
+    "isActive": true,
+    "commissionRate": 70
+  },
+  {
+    "id": "groomer2",
+    "name": "Mohd Arish",
+    "email": "arish@salon.com",
+    "password": "$2a$10$FnoZcjUiub5vJFIYSHLxMuGj1h7tjfPPcSOhCc4YQZ6O0p0Lphkya",
+    "role": "groomer",
+    "phone": "+916393790278",
+    "upiId": "arish@okhdfcbank",
+    "totalEarnings": 0,
+    "pendingPayout": 0,
+    "isActive": true,
+    "commissionRate": 70
+  }
+]

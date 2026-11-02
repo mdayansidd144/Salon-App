@@ -1,0 +1,282 @@
+[
+  {
+    "id": "1",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "spa_1",
+        "name": "Basic Hair Spa",
+        "price": 249,
+        "duration": 60,
+        "image": "https://www.byrdie.com/thmb/bq7WcV3iOqmPp0okYyb-VpagB-4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-92348095-1d41442eb93e4382abdb5e47a2d38a0a.jpg",
+        "category": "spa"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer2",
+      "name": "Mohd Arish",
+      "phone": "+916393790278",
+      "upiId": "arish@okhdfcbank"
+    },
+    "date": "2026-04-02",
+    "startTime": "11:30",
+    "endTime": "12:30",
+    "duration": 60,
+    "status": "confirmed",
+    "payment": {
+      "status": "paid",
+      "amount": 249,
+      "groomerEarning": 174,
+      "shopEarning": 75,
+      "paidToGroomer": false,
+      "transactionId": "pay_SYKRHnCkFMxH0u",
+      "paidAt": "2026-04-01T18:33:04.215Z"
+    },
+    "createdAt": "2026-04-01T18:32:31.448Z"
+  },
+  {
+    "id": "2",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "hair_1",
+        "name": "Classic Cut",
+        "price": 100,
+        "duration": 30,
+        "image": "https://tse3.mm.bing.net/th/id/OIP.h9Ipl1nv_Be4xAmVJMMYTAHaFj?pid=Api&P=0&h=180",
+        "category": "haircut"
+      },
+      {
+        "id": "beard_1",
+        "name": "Standard Trim",
+        "price": 49,
+        "duration": 20,
+        "image": "http://beardstyle.net/wp-content/uploads/2017/08/0442976669a5f64815d471e4e6c547fd.jpg",
+        "category": "beard"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer1",
+      "name": "Mohd Umar",
+      "phone": "+919519159639",
+      "upiId": "umar@okhdfcbank"
+    },
+    "date": "2026-04-02",
+    "startTime": "16:00",
+    "endTime": "16:50",
+    "duration": 50,
+    "status": "confirmed",
+    "payment": {
+      "status": "paid",
+      "amount": 149,
+      "groomerEarning": 104,
+      "shopEarning": 45,
+      "paidToGroomer": false,
+      "transactionId": "pay_SYUHUWsSryBiNf",
+      "paidAt": "2026-04-02T04:10:44.307Z"
+    },
+    "createdAt": "2026-04-02T04:08:58.766Z"
+  },
+  {
+    "id": "3",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "hair_1",
+        "name": "Classic Cut",
+        "price": 100,
+        "duration": 30,
+        "image": "https://tse3.mm.bing.net/th/id/OIP.h9Ipl1nv_Be4xAmVJMMYTAHaFj?pid=Api&P=0&h=180",
+        "category": "haircut"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer2",
+      "name": "Mohd Arish",
+      "phone": "+916393790278",
+      "upiId": "arish@okhdfcbank"
+    },
+    "date": "2026-04-02",
+    "startTime": "14:30",
+    "endTime": "15:00",
+    "duration": 30,
+    "status": "confirmed",
+    "payment": {
+      "status": "paid",
+      "amount": 100,
+      "groomerEarning": 70,
+      "shopEarning": 30,
+      "paidToGroomer": false,
+      "transactionId": "pay_SYUTGp6fVmk7QE",
+      "paidAt": "2026-04-02T04:21:52.873Z"
+    },
+    "createdAt": "2026-04-02T04:21:19.784Z"
+  },
+  {
+    "id": "4",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "beard_2",
+        "name": "Full Beard Styling",
+        "price": 59,
+        "duration": 30,
+        "image": "https://images.ctfassets.net/48b1x1jfyugu/6pwYWNqOc83UMj2e2vXv6m/6071fe4a47995336a1b6704e8228e9fc/15-BEARD-STYLES-FOR-MEN_2x__1_.png",
+        "category": "beard"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer1",
+      "name": "Mohd Umar",
+      "phone": "+919519159639",
+      "upiId": "umar@okhdfcbank"
+    },
+    "date": "2026-05-01",
+    "startTime": "11:00",
+    "endTime": "11:30",
+    "duration": 30,
+    "status": "pending",
+    "payment": {
+      "status": "pending",
+      "amount": 59,
+      "groomerEarning": 41,
+      "shopEarning": 18,
+      "paidToGroomer": false
+    },
+    "createdAt": "2026-05-01T11:44:41.965Z"
+  },
+  {
+    "id": "5",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "beard_2",
+        "name": "Full Beard Styling",
+        "price": 59,
+        "duration": 30,
+        "image": "https://images.ctfassets.net/48b1x1jfyugu/6pwYWNqOc83UMj2e2vXv6m/6071fe4a47995336a1b6704e8228e9fc/15-BEARD-STYLES-FOR-MEN_2x__1_.png",
+        "category": "beard"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer1",
+      "name": "Mohd Umar",
+      "phone": "+919519159639",
+      "upiId": "umar@okhdfcbank"
+    },
+    "date": "2026-05-01",
+    "startTime": "11:30",
+    "endTime": "12:00",
+    "duration": 30,
+    "status": "pending",
+    "payment": {
+      "status": "pending",
+      "amount": 59,
+      "groomerEarning": 41,
+      "shopEarning": 18,
+      "paidToGroomer": false
+    },
+    "createdAt": "2026-05-01T11:45:29.672Z"
+  },
+  {
+    "id": "6",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "beard_2",
+        "name": "Full Beard Styling",
+        "price": 59,
+        "duration": 30,
+        "image": "https://images.ctfassets.net/48b1x1jfyugu/6pwYWNqOc83UMj2e2vXv6m/6071fe4a47995336a1b6704e8228e9fc/15-BEARD-STYLES-FOR-MEN_2x__1_.png",
+        "category": "beard"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer1",
+      "name": "Mohd Umar",
+      "phone": "+919519159639",
+      "upiId": "umar@okhdfcbank"
+    },
+    "date": "2026-05-01",
+    "startTime": "15:30",
+    "endTime": "16:00",
+    "duration": 30,
+    "status": "pending",
+    "payment": {
+      "status": "pending",
+      "amount": 59,
+      "groomerEarning": 41,
+      "shopEarning": 18,
+      "paidToGroomer": false
+    },
+    "createdAt": "2026-05-01T11:46:19.001Z"
+  },
+  {
+    "id": "7",
+    "customer": {
+      "name": "Mohd Ayan Siddiqui",
+      "email": "ayansiddiqui1411@gmail.com",
+      "phone": "08318230087",
+      "notes": ""
+    },
+    "services": [
+      {
+        "id": "hair_1",
+        "name": "Classic Cut",
+        "price": 100,
+        "duration": 30,
+        "image": "https://tse3.mm.bing.net/th/id/OIP.h9Ipl1nv_Be4xAmVJMMYTAHaFj?pid=Api&P=0&h=180",
+        "category": "haircut"
+      }
+    ],
+    "assignedGroomer": {
+      "id": "groomer2",
+      "name": "Mohd Arish",
+      "phone": "+916393790278",
+      "upiId": "arish@okhdfcbank"
+    },
+    "date": "2026-05-01",
+    "startTime": "12:30",
+    "endTime": "13:00",
+    "duration": 30,
+    "status": "pending",
+    "payment": {
+      "status": "pending",
+      "amount": 100,
+      "groomerEarning": 70,
+      "shopEarning": 30,
+      "paidToGroomer": false
+    },
+    "createdAt": "2026-05-01T13:07:18.147Z"
+  }
+]

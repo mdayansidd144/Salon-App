@@ -1,149 +1,71 @@
+const crypto = require('crypto');
+const razorpay = require('../config/razorpay');
 const Appointment = require('../models/Appointment');
-const razorpayService = require('../services/razorpayService');
-const notificationService = require('../services/notificationService');
-const logger = require('../config/logger');
-
-exports.initiateRazorpayPayment = async (req, res) => {
+const { sendSMS, notifyAllBarbers } = require('../services/smsService');
+exports.createOrder = async (req, res) => {
   try {
     const { appointmentId } = req.body;
-    
-    const appointment = await Appointment.findById(appointmentId)
-      .populate('service', 'name price')
-      .populate('barber', 'name');
-    
-    if (!appointment) {
-      return res.status(404).json({
-        success: false,
-        message: 'Appointment not found'
-      });
-    }
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) return res.status(404).json({ success: false, message: 'Appointment not found' });
 
-    // Create Razorpay order
-    const order = await razorpayService.createOrder(
-      appointment.payment.amount,
-      appointment._id.toString(),
-      {
-        appointmentId: appointment._id.toString(),
-        customerName: appointment.customer.name,
-        customerEmail: appointment.customer.email
-      }
-    );
+    const options = {
+      amount: Math.round(appointment.service.price * 100),
+      currency: 'INR',
+      receipt: `rcpt_${appointmentId}`,
+      notes: { appointmentId }
+    };
 
-    // Update appointment with order ID
-    appointment.payment.orderId = order.orderId;
-    appointment.payment.method = 'razorpay';
-    appointment.payment.status = 'pending';
+    const order = await razorpay.orders.create(options);
+    appointment.payment.razorpayOrderId = order.id;
     await appointment.save();
 
-    res.status(200).json({
+    res.json({
       success: true,
-      data: {
-        orderId: order.orderId,
-        amount: order.amount,
-        currency: order.currency,
-        keyId: process.env.RAZORPAY_KEY_ID,
-        appointmentId: appointment._id
-      }
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID
     });
   } catch (error) {
-    logger.error('Payment initiation error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    console.error('Create order error:', error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-exports.verifyRazorpayPayment = async (req, res) => {
+// VERIFY payment
+exports.verifyPayment = async (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      appointmentId
-    } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, appointmentId } = req.body;
 
-    // Verify signature
-    const isValid = razorpayService.verifyPayment(
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature
-    );
+    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    const expected = crypto
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest('hex');
 
-    if (!isValid) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid payment signature'
-      });
+    if (expected !== razorpay_signature) {
+      return res.status(400).json({ success: false, message: 'Invalid signature' });
     }
 
-    // Get payment details
-    const payment = await razorpayService.getPayment(razorpay_payment_id);
-    
-    // Update appointment
     const appointment = await Appointment.findById(appointmentId);
     if (appointment) {
       appointment.payment.status = 'paid';
-      appointment.payment.transactionId = razorpay_payment_id;
-      appointment.payment.paymentId = razorpay_payment_id;
+      appointment.payment.razorpayPaymentId = razorpay_payment_id;
+      appointment.payment.razorpaySignature = razorpay_signature;
       appointment.payment.paidAt = new Date();
       appointment.status = 'confirmed';
       await appointment.save();
 
-      // Send confirmation notifications
-      await notificationService.sendAppointmentConfirmation(appointment);
+      const formattedDate = new Date(appointment.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+      const customerMessage = `Payment confirmed! Salon Pro: Your ${appointment.service.name} appointment on ${formattedDate} at ${appointment.startTime} is CONFIRMED. Amount paid: ₹${appointment.payment.amount}`;
+      await sendSMS(appointment.customer.phone, customerMessage);
+
+      const barberMessage = `PAYMENT RECEIVED!\nCustomer: ${appointment.customer.name}\nService: ${appointment.service.name}\nDate: ${formattedDate}\nTime: ${appointment.startTime}\nAmount: ₹${appointment.payment.amount}`;
+      await notifyAllBarbers(barberMessage);
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Payment verified successfully'
-    });
+    res.json({ success: true, message: 'Payment verified' });
   } catch (error) {
-    logger.error('Payment verification error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
-exports.initiatePhonePePayment = async (req, res) => {
-  try {
-    const { appointmentId, mobileNumber } = req.body;
-    
-    const appointment = await Appointment.findById(appointmentId);
-    if (!appointment) {
-      return res.status(404).json({
-        success: false,
-        message: 'Appointment not found'
-      });
-    }
-
-    const orderId = `SALON_${appointmentId}_${Date.now()}`;
-    const amount = appointment.payment.amount;
-
-    // PhonePe integration logic here
-    const paymentUrl = await phonepeService.initiatePayment({
-      amount,
-      orderId,
-      mobileNumber,
-      appointmentId: appointment._id
-    });
-
-    appointment.payment.orderId = orderId;
-    appointment.payment.method = 'phonepe';
-    await appointment.save();
-
-    res.status(200).json({
-      success: true,
-      paymentUrl,
-      orderId
-    });
-  } catch (error) {
-    logger.error('PhonePe payment error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
