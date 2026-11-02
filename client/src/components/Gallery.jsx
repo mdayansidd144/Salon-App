@@ -18,41 +18,53 @@ const Gallery = () => {
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 h-auto md:h-[600px]">
-          {/* Large Image 1 */}
-          <Reveal delay={0.1} className="col-span-2 row-span-2">
+        {/* Grid layout designed for exactly 4 images */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-auto md:h-[600px]">
+          
+          {/* Large Featured Image (Takes up 2 rows on desktop) */}
+          <Reveal delay={0.1} className="md:col-span-1 md:row-span-2 h-[300px] md:h-full">
             <div className="relative rounded-2xl overflow-hidden group w-full h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
-              <img src={salonData.images.gallery[0]} alt="Gallery 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+              <img 
+                src={salonData.images.gallery[0]} 
+                alt="Gallery Featured" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" 
+              />
             </div>
           </Reveal>
 
-          {/* Top Right Small Image 1 */}
-          <Reveal delay={0.2}>
-            <div className="relative rounded-2xl overflow-hidden group w-full h-[200px] md:h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
-              <img src={salonData.images.gallery[1]} alt="Gallery 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+          {/* Top Right Image */}
+          <Reveal delay={0.2} className="md:col-span-2 h-[250px] md:h-full">
+            <div className="relative rounded-2xl overflow-hidden group w-full h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
+              <img 
+                src={salonData.images.gallery[1]} 
+                alt="Gallery 2" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" 
+              />
             </div>
           </Reveal>
 
-          {/* Top Right Small Image 2 */}
-          <Reveal delay={0.3}>
-            <div className="relative rounded-2xl overflow-hidden group w-full h-[200px] md:h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
-              <img src={salonData.images.gallery[2]} alt="Gallery 3" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+          {/* Bottom Right Image 1 */}
+          <Reveal delay={0.3} className="md:col-span-1 h-[250px] md:h-full">
+            <div className="relative rounded-2xl overflow-hidden group w-full h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
+              <img 
+                src={salonData.images.gallery[2]} 
+                alt="Gallery 3" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" 
+              />
             </div>
           </Reveal>
 
-          {/* Bottom Right Small Image 1 */}
-          <Reveal delay={0.4}>
-            <div className="relative rounded-2xl overflow-hidden group w-full h-[200px] md:h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
-              <img src={salonData.images.gallery[3]} alt="Gallery 4" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+          {/* Bottom Right Image 2 */}
+          <Reveal delay={0.4} className="md:col-span-1 h-[250px] md:h-full">
+            <div className="relative rounded-2xl overflow-hidden group w-full h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
+              <img 
+                src={salonData.images.gallery[3]} 
+                alt="Gallery 4" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" 
+              />
             </div>
           </Reveal>
 
-          {/* Bottom Right Small Image 2 */}
-          <Reveal delay={0.5}>
-            <div className="relative rounded-2xl overflow-hidden group w-full h-[200px] md:h-full border-2 border-white/10 hover:border-[#D4AF37] transition-colors">
-              <img src={salonData.images.gallery[4]} alt="Gallery 5" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>
