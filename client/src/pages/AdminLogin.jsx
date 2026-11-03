@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { GoogleLogin } from '@react-oauth/google';
-
-// Use the environment variable
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const AdminLogin = () => {

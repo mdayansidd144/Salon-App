@@ -28,7 +28,7 @@ export const salonData = {
   features: [
     { title: "Master Barbers", desc: "Highly trained professionals with years of experience in classic and modern styling." },
     { title: "Premium Products", desc: "We only use top-tier organic grooming products that nourish your hair and skin." },
-    { title: "Relaxing Ambience", desc: "Step into a space designed for relaxation. Enjoy a complimentary beverage while you wait." },
+    { title: "Relaxing Ambience", desc: "Step into a space designed for relaxation. Enjoy a complimentary discussion while you wait." },
     { title: "Precision Focused", desc: "Every line, every fade, and every trim is executed with meticulous attention to detail." }
   ],
   stylists: [
