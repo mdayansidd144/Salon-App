@@ -43,6 +43,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         if (res.ok && data.slots && data.slots.length > 0) {
           setSlots(data.slots.map(formatTime));
         } else {
+          // Fallback
           const defaultSlots = [];
           for (let h = 10; h <= 21; h++) {
             defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -52,6 +53,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         }
       } catch (error) {
         console.error("API Error loading slots:", error);
+        // Fallback
         const defaultSlots = [];
         for (let h = 10; h <= 21; h++) {
           defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -135,7 +137,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
                   onClick={() => setSelectedGroomer(stylist.name)} 
                   className={`flex-1 flex flex-col items-center p-4 rounded-xl border transition-all duration-300 ${selectedGroomer === stylist.name ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-gray-800 hover:border-gray-600 bg-[#1a1a1a]'}`}
                 >
-                  {/* FIXED IMAGE CENTERING HERE with object-top */}
                   <img 
                     src={stylist.image} 
                     alt={stylist.name} 
