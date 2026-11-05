@@ -25,7 +25,6 @@ const CategoryPage = () => {
     <div className="pt-32 pb-20 bg-[#0f0f0f] min-h-screen">
       <div className="container mx-auto px-6">
         
-        {/* Header */}
         <Reveal>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 border-b border-gray-800 pb-6">
             <div>
@@ -41,25 +40,15 @@ const CategoryPage = () => {
           </div>
         </Reveal>
 
-        {/* Services List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {categoryData.services?.map((service, index) => (
             <Reveal key={index} delay={index * 0.1}>
               <div className="bg-[#151515] border border-gray-800 rounded-3xl overflow-hidden group hover:border-[#D4AF37] transition-all duration-300 flex flex-col h-full">
                 
-                {/* Image Container */}
                 {service.image && (
                   <div className="relative h-72 overflow-hidden bg-[#0a0a0a] p-3 flex items-center justify-center">
-                    <img 
-                      src={service.image} 
-                      alt="" 
-                      className="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-110" 
-                    />
-                    <img 
-                      src={service.image} 
-                      alt={service.name} 
-                      className="relative w-full h-full object-contain rounded-xl border-2 border-white/20 group-hover:scale-105 transition-transform duration-700 z-10 shadow-2xl" 
-                    />
+                    <img src={service.image} alt="" className="absolute inset-0 w-full h-full object-cover blur-md opacity-40 scale-110" />
+                    <img src={service.image} alt={service.name} className="relative w-full h-full object-contain rounded-xl border-2 border-white/20 group-hover:scale-105 transition-transform duration-700 z-10 shadow-2xl" />
                     <div className="absolute top-6 right-6 bg-[#0a0a0a]/90 border border-[#D4AF37]/50 backdrop-blur-md px-3 py-1 rounded-full z-20">
                       <span className="text-[#D4AF37] font-bold text-sm">
                         {service.price ? `₹${service.price}` : 'Price'}
@@ -75,7 +64,7 @@ const CategoryPage = () => {
                   <div className="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
                     <button 
                       onClick={() => {
-                        setSelectedService(service); // Pass the WHOLE service object
+                        setSelectedService(service);
                         setIsModalOpen(true);
                       }}
                       className="btn-gold px-6 py-2 text-sm w-full"
@@ -90,12 +79,11 @@ const CategoryPage = () => {
         </div>
       </div>
 
-      {/* Booking Modal */}
-      {isModalOpen && (
+      {isModalOpen && selectedService && (
         <BookingModal 
           isOpen={isModalOpen} 
           onClose={() => setIsModalOpen(false)} 
-          serviceData={selectedService} // Changed prop name to serviceData
+          serviceData={selectedService}
           category={categoryData.title}
         />
       )}

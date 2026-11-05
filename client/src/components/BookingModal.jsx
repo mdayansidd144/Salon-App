@@ -15,9 +15,9 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const stylists = salonData.stylists || [];
+  const stylists = salonData?.stylists || [];
 
-  // Helper to format 24h (14:30) to 12h (02:30 PM)
+  // Function to format 14:30 to 02:30 PM
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('AM') || timeStr.includes('PM')) return timeStr;
@@ -29,44 +29,49 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
   };
 
   useEffect(() => {
+    // If modal is closed, do nothing
+    if (!isOpen) return;
+
     const fetchSlots = async () => {
-      if (!date || !selectedGroomer) return;
+      if (!date || !selectedGroomer) {
+        setSlots([]);
+        return;
+      }
       
       try {
         const res = await fetch(`${API_BASE}/bookings/slots?date=${date}&groomer=${selectedGroomer}`);
         const data = await res.json();
         
-        // If backend returns valid slots, format them
         if (res.ok && data.slots && data.slots.length > 0) {
           setSlots(data.slots.map(formatTime));
         } else {
-          // Fallback if backend returns empty array
-          generateFallbackSlots();
+          // If backend fails, just show default slots so the user can book
+          const defaultSlots = [];
+          for (let h = 10; h <= 21; h++) {
+            defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
+            defaultSlots.push(`${h.toString().padStart(2, '0')}:30`);
+          }
+          setSlots(defaultSlots.map(formatTime));
         }
       } catch (error) {
-        console.error("API Error:", error);
-        // Fallback if backend fails
-        generateFallbackSlots();
+        console.error("API Error loading slots:", error);
+        // Fallback to default slots on network error
+        const defaultSlots = [];
+        for (let h = 10; h <= 21; h++) {
+          defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
+          defaultSlots.push(`${h.toString().padStart(2, '0')}:30`);
+        }
+        setSlots(defaultSlots.map(formatTime));
       }
     };
-    
-    const generateFallbackSlots = () => {
-      const times = [];
-      for (let hour = 10; hour <= 21; hour++) {
-        times.push(`${hour.toString().padStart(2, '0')}:00`);
-        times.push(`${hour.toString().padStart(2, '0')}:30`);
-      }
-      setSlots(times.map(formatTime));
-    };
-
     fetchSlots();
-  }, [date, selectedGroomer]);
+  }, [date, selectedGroomer, isOpen]);
 
   const handleBooking = async (e) => {
     e.preventDefault();
     
     if (!selectedGroomer || !date || !selectedSlot || !name || !phone) {
-      return toast.error('Please fill all required fields');
+      return toast.error('Please fill all required fields (Groomer, Date, Time, Name, Phone)');
     }
 
     setLoading(true);
@@ -76,12 +81,12 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer: { name, email, phone },
-          serviceId: serviceData.name,
+          serviceId: serviceData?.name || 'Service',
           barberId: selectedGroomer,
           date: date,
           startTime: selectedSlot,
           endTime: selectedSlot,
-          amount: serviceData.price
+          amount: serviceData?.price || 0
         })
       });
 
@@ -100,7 +105,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !serviceData) return null;
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
@@ -113,23 +118,19 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
           </button>
           
           {serviceData.image && (
-            <img 
-              src={serviceData.image} 
-              alt={serviceData.name} 
-              className="w-16 h-16 object-cover rounded-xl border border-gray-700 mr-4" 
-            />
+            <img src={serviceData.image} alt={serviceData.name} className="w-16 h-16 object-cover rounded-xl border border-gray-700 mr-4" />
           )}
           <div>
             <h2 className="text-2xl font-serif text-white">{serviceData.name}</h2>
             <p className="text-sm text-gray-400 mt-1">
-              {serviceData.duration || '15 mins'} • <span className="text-[#D4AF37] font-medium">₹{serviceData.price}</span>
+              {serviceData.duration || '30 mins'} • <span className="text-[#D4AF37] font-medium">₹{serviceData.price}</span>
             </p>
           </div>
         </div>
 
         <form onSubmit={handleBooking} className="p-6 space-y-6">
           
-          {/* 1. Choose Groomer - EXACT ORIGINAL DESIGN */}
+          {/* 1. Choose Groomer */}
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">1. Choose Groomer</label>
             <div className="flex gap-4">
@@ -161,7 +162,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
             <div className="mt-4">
               {date && selectedGroomer ? (
                 slots.length > 0 ? (
-                  <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1">
                     {slots.map((slot, idx) => (
                       <button 
                         key={idx} 
@@ -174,7 +175,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm text-center py-2">No slots available. Try another date.</p>
+                  <p className="text-gray-500 text-sm text-center py-2">No slots available.</p>
                 )
               ) : (
                 <p className="text-gray-500 text-sm text-center py-2">Select a groomer to see times.</p>
@@ -185,27 +186,9 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
           {/* 3. Your Details */}
           <div className="space-y-4">
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">3. Your Details</label>
-            <input 
-              type="text" 
-              placeholder="Full Name *" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-              className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]"
-            />
-            <input 
-              type="email" 
-              placeholder="Email Address (Optional)" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]"
-            />
-            <input 
-              type="tel" 
-              placeholder="Phone Number *" 
-              value={phone} 
-              onChange={(e) => setPhone(e.target.value)} 
-              className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]"
-            />
+            <input type="text" placeholder="Full Name *" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]" />
+            <input type="email" placeholder="Email Address (Optional)" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]" />
+            <input type="tel" placeholder="Phone Number *" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]" />
           </div>
 
           <div className="flex gap-4 mt-8">
