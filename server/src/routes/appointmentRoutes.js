@@ -20,7 +20,6 @@ router.post('/', async (req, res) => {
     
     console.log("Creating appointment for:", customer?.name);
 
-    // Create the appointment safely
     const appointment = await Appointment.create({
       customer: {
         name: customer.name,
@@ -37,30 +36,32 @@ router.post('/', async (req, res) => {
       payment: { status: 'paid', amount: amount }
     });
 
-    const groomerMessage = `NEW BOOKING!\nCustomer: ${customer.name}\nPhone: ${customer.phone}\nService: ${serviceId}\nDate: ${date}\nTime: ${startTime}\nAmount: ₹${amount}`;
+    try {
+      const groomerMessage = `NEW BOOKING!\nCustomer: ${customer.name}\nPhone: ${customer.phone}\nService: ${serviceId}\nDate: ${date}\nTime: ${startTime}\nAmount: ₹${amount}`;
+      if (process.env.BARBER1_EMAIL) await sendSMS(process.env.BARBER1_EMAIL, groomerMessage);
+      if (process.env.BARBER2_EMAIL) await sendSMS(process.env.BARBER2_EMAIL, groomerMessage);
+    } catch (smsErr) {
+      console.log("SMS failed but booking succeeded.");
+    }
     
-    console.log("Sending Email to barbers...");
-    if (process.env.BARBER1_EMAIL) await sendSMS(process.env.BARBER1_EMAIL, groomerMessage);
-    if (process.env.BARBER2_EMAIL) await sendSMS(process.env.BARBER2_EMAIL, groomerMessage);
-    
-    // Send back success so frontend stops spinning
     res.json({ success: true, data: appointment });
   } catch (error) {
     console.error("Create appointment error:", error.message);
+    // This returns the exact validation error to the frontend instead of crashing
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
 router.get('/groomer-dashboard', protect, async (req, res) => {
-  // ... keep your existing code for this route ...
+  // Keep your existing code for this route
 });
 
 router.put('/:id/complete', protect, async (req, res) => {
-  // ... keep your existing code for this route ...
+  // Keep your existing code for this route
 });
 
 router.get('/', protect, async (req, res) => {
-  // ... keep your existing code for this route ...
+  // Keep your existing code for this route
 });
 
 module.exports = router;

@@ -17,7 +17,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
   const stylists = salonData?.stylists || [];
 
-  // Function to format 14:30 to 02:30 PM
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     if (timeStr.includes('AM') || timeStr.includes('PM')) return timeStr;
@@ -29,7 +28,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
   };
 
   useEffect(() => {
-    // If modal is closed, do nothing
     if (!isOpen) return;
 
     const fetchSlots = async () => {
@@ -45,7 +43,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         if (res.ok && data.slots && data.slots.length > 0) {
           setSlots(data.slots.map(formatTime));
         } else {
-          // If backend fails, just show default slots so the user can book
           const defaultSlots = [];
           for (let h = 10; h <= 21; h++) {
             defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -55,7 +52,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         }
       } catch (error) {
         console.error("API Error loading slots:", error);
-        // Fallback to default slots on network error
         const defaultSlots = [];
         for (let h = 10; h <= 21; h++) {
           defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -67,7 +63,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
     fetchSlots();
   }, [date, selectedGroomer, isOpen]);
 
-    const handleBooking = async (e) => {
+  const handleBooking = async (e) => {
     e.preventDefault();
     
     if (!selectedGroomer || !date || !selectedSlot || !name || !phone) {
@@ -81,12 +77,12 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer: { name, email, phone },
-          serviceId: serviceData.name,
+          serviceId: serviceData?.name || 'Service',
           barberId: selectedGroomer,
           date: date,
           startTime: selectedSlot,
           endTime: selectedSlot,
-          amount: serviceData.price
+          amount: serviceData?.price || 0
         })
       });
 
@@ -94,9 +90,8 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
       if (res.ok && data.success) {
         toast.success('Booking Confirmed!');
-        onClose(); // Only close on success
+        onClose(); 
       } else {
-        // If backend says no, show the error but keep modal open
         toast.error(data.message || 'Booking failed');
       }
     } catch (error) {
@@ -112,7 +107,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-[#111111] border border-gray-800 rounded-2xl w-full max-w-lg relative my-auto shadow-2xl">
         
-        {/* Header */}
         <div className="flex items-center p-6 border-b border-gray-800 relative">
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -131,7 +125,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
         <form onSubmit={handleBooking} className="p-6 space-y-6">
           
-          {/* 1. Choose Groomer */}
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">1. Choose Groomer</label>
             <div className="flex gap-4">
@@ -142,7 +135,12 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
                   onClick={() => setSelectedGroomer(stylist.name)} 
                   className={`flex-1 flex flex-col items-center p-4 rounded-xl border transition-all duration-300 ${selectedGroomer === stylist.name ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-gray-800 hover:border-gray-600 bg-[#1a1a1a]'}`}
                 >
-                  <img src={stylist.image} alt={stylist.name} className="w-14 h-14 rounded-full object-cover mb-3 border border-gray-700" />
+                  {/* FIXED IMAGE CENTERING HERE with object-top */}
+                  <img 
+                    src={stylist.image} 
+                    alt={stylist.name} 
+                    className="w-16 h-16 rounded-full object-cover object-top mb-3 border border-gray-700" 
+                  />
                   <span className="text-white text-sm font-medium">{stylist.name}</span>
                   <span className="text-[10px] text-gray-500 uppercase tracking-wide mt-1">{stylist.role}</span>
                 </button>
@@ -150,7 +148,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
             </div>
           </div>
 
-          {/* 2. Date & Time */}
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">2. Date & Time</label>
             <input 
@@ -184,7 +181,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
             </div>
           </div>
 
-          {/* 3. Your Details */}
           <div className="space-y-4">
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">3. Your Details</label>
             <input type="text" placeholder="Full Name *" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#D4AF37]" />
