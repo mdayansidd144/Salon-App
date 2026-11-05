@@ -19,14 +19,20 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log("Submitting to:", `${API_BASE}/contact`);
+    
+    // 10 second timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
       const res = await fetch(`${API_BASE}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       const data = await res.json();
       
       if (res.ok) {
@@ -36,8 +42,11 @@ const ContactPage = () => {
         toast.error(data.message || 'Failed to send message');
       }
     } catch (error) {
-      console.error("Contact Error:", error);
-      toast.error('Cannot connect to server. Please try again later.');
+      if (error.name === 'AbortError') {
+        toast.error('Server took too long to respond. Please try again.');
+      } else {
+        toast.error('Cannot connect to server. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
