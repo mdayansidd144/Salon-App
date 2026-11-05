@@ -56,37 +56,5 @@ export const salonData = {
       rating: 4.8,
       reviews: 189
     }
-  ],
-  // NEW CATEGORIES ARRAY ADDED HERE
-  categories: [
-    {
-      id: "haircut",
-      title: "Haircuts",
-      description: "Precision cuts and expert styling for every look.",
-      services: [
-        { name: "Classic Haircut", price: 20, description: "Standard cut and wash." },
-        { name: "Skin Fade", price: 25, description: "Clean, sharp skin fade." },
-        { name: "Kids Haircut", price: 15, description: "For the little ones." }
-      ]
-    },
-    {
-      id: "beard",
-      title: "Beard Grooming",
-      description: "Keep your beard looking sharp and healthy.",
-      services: [
-        { name: "Beard Trim", price: 15, description: "Shape and line up." },
-        { name: "Hot Towel Shave", price: 20, description: "Luxury traditional shave." },
-        { name: "Beard Color", price: 25, description: "Cover up the grays." }
-      ]
-    },
-    {
-      id: "facial",
-      title: "Facials & Spa",
-      description: "Rejuvenate your skin with our premium treatments.",
-      services: [
-        { name: "Express Facial", price: 30, description: "Quick refresh." },
-        { name: "Cleanup", price: 20, description: "Basic skin cleanup." }
-      ]
-    }
   ]
 };

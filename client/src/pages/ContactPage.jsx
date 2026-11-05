@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
+
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -9,20 +11,24 @@ const ContactPage = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Submitting to:", `${API_BASE}/contact`);
+
     try {
-      // UPDATED FETCH CALL
       const res = await fetch(`${API_BASE}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
       const data = await res.json();
+      
       if (res.ok) {
         toast.success('Message sent successfully!');
         setFormData({ name: '', email: '', phone: '', message: '' });
@@ -30,6 +36,7 @@ const ContactPage = () => {
         toast.error(data.message || 'Failed to send message');
       }
     } catch (error) {
+      console.error("Contact Error:", error);
       toast.error('Cannot connect to server. Please try again later.');
     } finally {
       setLoading(false);

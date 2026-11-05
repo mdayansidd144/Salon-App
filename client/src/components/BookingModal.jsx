@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 
-// 1. ADD THIS LINE AT THE TOP
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const BookingModal = ({ isOpen, onClose, service, category }) => {
@@ -15,14 +14,15 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 2. UPDATE THE SLOTS FETCHING LOGIC
   useEffect(() => {
     const fetchSlots = async () => {
       if (!date || !selectedGroomer) return;
       
+      const url = `${API_BASE}/bookings/slots?date=${date}&groomer=${selectedGroomer}`;
+      console.log("Fetching slots from:", url);
+
       try {
-        // UPDATED URL HERE
-        const res = await fetch(`${API_BASE}/bookings/slots?date=${date}&groomer=${selectedGroomer}`);
+        const res = await fetch(url);
         const data = await res.json();
         
         if (res.ok) {
@@ -32,6 +32,7 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
           setSlots([]);
         }
       } catch (error) {
+        console.error("Slots Error:", error);
         toast.error('Cannot connect to server to load slots');
         setSlots([]);
       }
@@ -39,7 +40,6 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
     fetchSlots();
   }, [date, selectedGroomer]);
 
-  // 3. UPDATE THE CONFIRM BOOKING LOGIC
   const handleBooking = async (e) => {
     e.preventDefault();
     
@@ -49,7 +49,6 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
 
     setLoading(true);
     try {
-      // UPDATED URL HERE
       const res = await fetch(`${API_BASE}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,7 +68,7 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
 
       if (res.ok && data.success) {
         toast.success('Booking Confirmed!');
-        onClose(); // Close modal on success
+        onClose();
       } else {
         toast.error(data.message || 'Booking failed');
       }
@@ -98,7 +97,6 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">1. Choose Groomer</label>
             <div className="flex gap-4">
-              {/* Your existing groomer buttons... make sure they update setSelectedGroomer */}
               <button type="button" onClick={() => setSelectedGroomer('Mohd Umar')} className={`p-3 rounded-xl border ${selectedGroomer === 'Mohd Umar' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-gray-800'}`}>Mohd Umar</button>
               <button type="button" onClick={() => setSelectedGroomer('Mohd Arish')} className={`p-3 rounded-xl border ${selectedGroomer === 'Mohd Arish' ? 'border-[#D4AF37] bg-[#D4AF37]/10' : 'border-gray-800'}`}>Mohd Arish</button>
             </div>
@@ -114,7 +112,6 @@ const BookingModal = ({ isOpen, onClose, service, category }) => {
               className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] mb-4"
             />
             
-            {/* Slots Display */}
             {date && selectedGroomer && (
               <div className="grid grid-cols-3 gap-2">
                 {slots.length > 0 ? slots.map((slot, idx) => (
