@@ -3,6 +3,11 @@ const router = express.Router();
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { protect } = require('../middleware/auth');
+const { Resend } = require('resend');
+
+// Safely initialize Resend
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 router.get('/slots', (req, res) => {
   const slots = [];
@@ -33,7 +38,31 @@ router.post('/', async (req, res) => {
       payment: { status: 'paid', amount: amount }
     });
 
-    // EMAIL/SMS LOGIC REMOVED SO IT DOESN'T HANG
+    // Send Email via Resend if API key exists
+    if (resend) {
+      try {
+        console.log("Sending booking email via Resend...");
+        const emailResponse = await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: process.env.EMAIL_USER,
+          subject: `New Booking: ${customer.name}`,
+          text: `
+            NEW BOOKING!
+            Customer: ${customer.name}
+            Phone: ${customer.phone}
+            Service: ${serviceId}
+            Date: ${date}
+            Time: ${startTime}
+            Amount: ₹${amount}
+          `
+        });
+        console.log("Booking email sent:", emailResponse);
+      } catch (emailErr) {
+        console.error("Booking email failed:", emailErr.message);
+      }
+    } else {
+      console.log("Skipped booking email: RESEND_API_KEY is missing.");
+    }
     
     res.json({ success: true, data: appointment });
   } catch (error) {
