@@ -17,55 +17,26 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
   const stylists = salonData.stylists || [];
 
-  // Helper function to generate slots from 10 AM to 10 PM
-  const generateTimeSlots = () => {
-    const times = [];
-    let hour = 10;
-    let minute = 0;
-    
-    while (hour < 22) { // 22 is 10 PM
-      const ampm = hour >= 12 ? 'PM' : 'AM';
-      const displayHour = hour > 12 ? hour - 12 : hour;
-      const displayMinute = minute === 0 ? '00' : '30';
-      
-      times.push(`${displayHour}:${displayMinute} ${ampm}`);
-      
-      if (minute === 0) {
-        minute = 30;
-      } else {
-        minute = 0;
-        hour++;
-      }
-    }
-    return times;
-  };
-
   useEffect(() => {
     const fetchSlots = async () => {
-      // Don't fetch if no date or groomer is selected
-      if (!date || !selectedGroomer) {
-        setSlots([]);
-        return;
-      }
+      if (!date || !selectedGroomer) return;
       
       try {
         const res = await fetch(`${API_BASE}/bookings/slots?date=${date}&groomer=${selectedGroomer}`);
         const data = await res.json();
         
-        // If the backend returns slots, use them
-        if (res.ok && data.slots && data.slots.length > 0) {
-          setSlots(data.slots);
+        if (res.ok) {
+          setSlots(data.slots || []);
         } else {
-          // FALLBACK: If backend returns empty or fails, show 10 AM - 10 PM slots
-          setSlots(generateTimeSlots());
+          toast.error(data.message || 'Failed to load slots');
+          setSlots([]);
         }
       } catch (error) {
-        console.error("Failed to fetch slots, using default times:", error);
-        // FALLBACK: If server is down, still show the standard slots
-        setSlots(generateTimeSlots());
+        console.error("API Error:", error);
+        toast.error('Cannot connect to server to load slots');
+        setSlots([]);
       }
     };
-    
     fetchSlots();
   }, [date, selectedGroomer]);
 
@@ -167,11 +138,11 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
               className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors [color-scheme:dark]"
             />
             
-            {/* SLOTS GRID */}
+            {/* SLOTS GRID (No Scrollbar, just clean grid) */}
             <div className="mt-4">
               {date && selectedGroomer ? (
                 slots.length > 0 ? (
-                  <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="grid grid-cols-3 gap-2">
                     {slots.map((slot, idx) => (
                       <button 
                         key={idx} 
@@ -184,10 +155,10 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-sm">No slots available.</p>
+                  <p className="text-gray-500 text-sm text-center py-2">No slots available. Try another date.</p>
                 )
               ) : (
-                <p className="text-gray-500 text-sm">Select a groomer to see times.</p>
+                <p className="text-gray-500 text-sm text-center py-2">Select a groomer to see times.</p>
               )}
             </div>
           </div>
@@ -223,7 +194,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="w-2/3 bg-[#D4AF37] text-black rounded-lg py-3 font-bold hover:bg-[#b8952b] transition disabled:opacity-50">
-              {/* CHANGED BUTTON TEXT HERE */}
               {loading ? 'Processing...' : 'Confirm Booking'}
             </button>
           </div>
