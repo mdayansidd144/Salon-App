@@ -43,7 +43,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         if (res.ok && data.slots && data.slots.length > 0) {
           setSlots(data.slots.map(formatTime));
         } else {
-          // Fallback
           const defaultSlots = [];
           for (let h = 10; h <= 21; h++) {
             defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -53,7 +52,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         }
       } catch (error) {
         console.error("API Error loading slots:", error);
-        // Fallback
         const defaultSlots = [];
         for (let h = 10; h <= 21; h++) {
           defaultSlots.push(`${h.toString().padStart(2, '0')}:00`);
@@ -73,6 +71,9 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
     }
 
     setLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     try {
       const res = await fetch(`${API_BASE}/bookings`, {
         method: 'POST',
@@ -85,9 +86,11 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
           startTime: selectedSlot,
           endTime: selectedSlot,
           amount: serviceData?.price || 0
-        })
+        }),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       const data = await res.json();
 
       if (res.ok && data.success) {
@@ -97,7 +100,11 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         toast.error(data.message || 'Booking failed');
       }
     } catch (error) {
-      toast.error('Cannot connect to server. Please try again.');
+      if (error.name === 'AbortError') {
+        toast.error('Server timed out. Please try again.');
+      } else {
+        toast.error('Cannot connect to server. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -108,12 +115,10 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-[#111111] border border-gray-800 rounded-2xl w-full max-w-lg relative my-auto shadow-2xl">
-        
         <div className="flex items-center p-6 border-b border-gray-800 relative">
           <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
-          
           {serviceData.image && (
             <img src={serviceData.image} alt={serviceData.name} className="w-16 h-16 object-cover rounded-xl border border-gray-700 mr-4" />
           )}
@@ -126,7 +131,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         </div>
 
         <form onSubmit={handleBooking} className="p-6 space-y-6">
-          
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">1. Choose Groomer</label>
             <div className="flex gap-4">
@@ -137,11 +141,7 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
                   onClick={() => setSelectedGroomer(stylist.name)} 
                   className={`flex-1 flex flex-col items-center p-4 rounded-xl border transition-all duration-300 ${selectedGroomer === stylist.name ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-gray-800 hover:border-gray-600 bg-[#1a1a1a]'}`}
                 >
-                  <img 
-                    src={stylist.image} 
-                    alt={stylist.name} 
-                    className="w-16 h-16 rounded-full object-cover object-top mb-3 border border-gray-700" 
-                  />
+                  <img src={stylist.image} alt={stylist.name} className="w-16 h-16 rounded-full object-cover object-top mb-3 border border-gray-700" />
                   <span className="text-white text-sm font-medium">{stylist.name}</span>
                   <span className="text-[10px] text-gray-500 uppercase tracking-wide mt-1">{stylist.role}</span>
                 </button>
@@ -151,24 +151,13 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">2. Date & Time</label>
-            <input 
-              type="date" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)} 
-              className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors [color-scheme:dark]"
-            />
-            
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors [color-scheme:dark]" />
             <div className="mt-4">
               {date && selectedGroomer ? (
                 slots.length > 0 ? (
                   <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto pr-1">
                     {slots.map((slot, idx) => (
-                      <button 
-                        key={idx} 
-                        type="button"
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`py-2 rounded-lg text-xs border transition-all ${selectedSlot === slot ? 'bg-[#D4AF37] text-black border-[#D4AF37] font-bold' : 'bg-[#1a1a1a] text-gray-300 border-gray-800 hover:border-gray-600'}`}
-                      >
+                      <button key={idx} type="button" onClick={() => setSelectedSlot(slot)} className={`py-2 rounded-lg text-xs border transition-all ${selectedSlot === slot ? 'bg-[#D4AF37] text-black border-[#D4AF37] font-bold' : 'bg-[#1a1a1a] text-gray-300 border-gray-800 hover:border-gray-600'}`}>
                         {slot}
                       </button>
                     ))}
@@ -197,7 +186,6 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
               {loading ? 'Processing...' : 'Confirm Booking'}
             </button>
           </div>
-
         </form>
       </div>
     </div>
