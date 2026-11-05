@@ -4,23 +4,16 @@ import { toast } from 'react-hot-toast';
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
-    // 10 second timeout
+    // Forces the frontend to stop waiting after 10 seconds
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -43,9 +36,9 @@ const ContactPage = () => {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        toast.error('Server took too long to respond. Please try again.');
+        toast.error('Server timed out. Email might be blocked by Render.');
       } else {
-        toast.error('Cannot connect to server. Please try again later.');
+        toast.error('Cannot connect to server.');
       }
     } finally {
       setLoading(false);
@@ -60,57 +53,21 @@ const ContactPage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors"
-            />
+            <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
           </div>
-
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors"
-            />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
           </div>
-
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors"
-            />
+            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors" />
           </div>
-
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Message</label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              required
-              rows="4"
-              className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors"
-            ></textarea>
+            <textarea name="message" value={formData.message} onChange={handleChange} required rows="4" className="w-full bg-[#0a0a0a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-[#D4AF37] transition-colors"></textarea>
           </div>
-
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full btn-gold py-3 mt-4 disabled:opacity-70"
-          >
+          <button type="submit" disabled={loading} className="w-full btn-gold py-3 mt-4 disabled:opacity-70">
             {loading ? 'Sending...' : 'Send Message'}
           </button>
         </form>
