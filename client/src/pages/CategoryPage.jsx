@@ -37,23 +37,38 @@ const CategoryPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {categoryData.services?.map((service, index) => (
             <Reveal key={index} delay={index * 0.1}>
-              <div className="bg-[#151515] border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] transition-all duration-300 flex flex-col h-full p-8">
-                <h3 className="text-2xl font-bold text-white mb-2">{service.name}</h3>
-                <p className="text-gray-400 mb-6 flex-grow">{service.description}</p>
+              <div className="bg-[#151515] border border-gray-800 rounded-3xl overflow-hidden hover:border-[#D4AF37] transition-all duration-300 flex flex-col h-full">
                 
-                <div className="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
-                  <span className="text-[#D4AF37] font-bold text-lg">
-                    {service.price ? `$${service.price}` : 'Contact for Price'}
-                  </span>
-                  <button 
-                    onClick={() => {
-                      setSelectedService(service.name);
-                      setIsModalOpen(true);
-                    }}
-                    className="btn-gold px-6 py-2 text-sm"
-                  >
-                    Book Now
-                  </button>
+                {/* 1. BRINGING BACK THE IMAGES */}
+                {service.image && (
+                  <div className="relative h-48 overflow-hidden bg-[#0a0a0a]">
+                    <img 
+                      src={service.image} 
+                      alt={service.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                    />
+                  </div>
+                )}
+
+                <div className="p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-bold text-white mb-2">{service.name}</h3>
+                  <p className="text-gray-400 mb-6 flex-grow">{service.description}</p>
+                  
+                  <div className="flex justify-between items-center pt-4 border-t border-white/10 mt-auto">
+                    {/* 2. BRINGING BACK THE RUPEES RATE (₹) */}
+                    <span className="text-[#D4AF37] font-bold text-lg">
+                      {service.price ? `₹${service.price}` : 'Contact for Price'}
+                    </span>
+                    <button 
+                      onClick={() => {
+                        setSelectedService(service.name);
+                        setIsModalOpen(true);
+                      }}
+                      className="btn-gold px-6 py-2 text-sm"
+                    >
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               </div>
             </Reveal>
