@@ -67,11 +67,11 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
     fetchSlots();
   }, [date, selectedGroomer, isOpen]);
 
-  const handleBooking = async (e) => {
+    const handleBooking = async (e) => {
     e.preventDefault();
     
     if (!selectedGroomer || !date || !selectedSlot || !name || !phone) {
-      return toast.error('Please fill all required fields (Groomer, Date, Time, Name, Phone)');
+      return toast.error('Please fill all required fields');
     }
 
     setLoading(true);
@@ -81,12 +81,12 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customer: { name, email, phone },
-          serviceId: serviceData?.name || 'Service',
+          serviceId: serviceData.name,
           barberId: selectedGroomer,
           date: date,
           startTime: selectedSlot,
           endTime: selectedSlot,
-          amount: serviceData?.price || 0
+          amount: serviceData.price
         })
       });
 
@@ -94,8 +94,9 @@ const BookingModal = ({ isOpen, onClose, serviceData, category }) => {
 
       if (res.ok && data.success) {
         toast.success('Booking Confirmed!');
-        onClose();
+        onClose(); // Only close on success
       } else {
+        // If backend says no, show the error but keep modal open
         toast.error(data.message || 'Booking failed');
       }
     } catch (error) {
